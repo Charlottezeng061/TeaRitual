@@ -3,7 +3,6 @@
   --color1: #f5f1e7; /* Background */
   --color2: #3a2b25; /* Main text and outlines */
   --color3: #7f927d; /* Step counter */
-  --color4: #a77d60; /* Subtitle */
   --color5: #e9e2d0; /* Table surface */
   --color6: #726050; /* Table edge */
 }
@@ -123,10 +122,6 @@ h2 {
     font-size: 14px;
     line-height: 1.5;
   }
-
-  .restart {
-    font-size: 13px;
-  }
 }
 
 
@@ -167,10 +162,6 @@ body {
 
 h1 {
   margin: 0 0 8px;
-}
-
-.title p {
-  margin: 0;
 }
 
 .info-button {
@@ -217,8 +208,6 @@ h1 {
 
 #info-dialog h2 {
   margin: 0 24px 18px 0;
-  text-transform: none;
-  letter-spacing: 0;
 }
 
 
@@ -366,9 +355,9 @@ h1 {
 .guide-box {
   position: relative;
   left: 40px;
-  flex: 0 1 560px;
+ flex: 0 1 620px;
+ padding: 10px 20px;
   min-width: 0;
-  padding: 18px 24px;
   border-width: 1.5px;
   border-style: solid;
   border-radius: 18px;
@@ -656,12 +645,6 @@ h2 {
   z-index: 10;
 }
 
-/* Highlight the receiving object during a drag. */
-.drop-target {
-  outline: 1px dashed var(--color3);
-  outline-offset: 3px;
-}
-
 /* Briefly tilt the scoop without replacing its drag position. */
 .scoop.tipping {
   rotate: 18deg;
@@ -691,15 +674,20 @@ h2 {
   background-color: var(--color2);
 }
 
-/* Keep the restart option inside the guide. */
+/* Place a small restart button in the guide's bottom-right corner. */
 .restart {
-  margin-top: 12px;
-  padding: 4px 0;
-  border: none;
-  border-bottom: 1px solid var(--color2);
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  padding: 5px 10px;
+
+  border: 1px solid var(--color2);
+  border-radius: 8px;
   color: var(--color2);
-  background: none;
-  font: inherit;
+  background-color: var(--color1);
+
+  font-family: "Comic Sans MS", "Chalkboard SE", sans-serif;
+  font-size: 12px;
   cursor: pointer;
 }
 
@@ -745,4 +733,36 @@ h2 {
 .info-button:focus-visible {
   outline: none;
   box-shadow: none;
+}
+
+/* Show a short introduction beside the pointer. */
+.object-tooltip {
+  position: fixed;
+  z-index: 30;
+  width: 210px;
+  padding: 10px 14px;
+  border: 1px solid var(--color2);
+  border-radius: 10px;
+  color: var(--color2);
+  background-color: var(--color1);
+  font-family: "Comic Sans MS", "Chalkboard SE", sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  pointer-events: none;
+}
+
+.object-tooltip strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 15px;
+}
+
+.object-tooltip[hidden] {
+  display: none;
+}
+
+/* Prevent automatic scroll adjustments. */
+html,
+body {
+  overflow-anchor: none;
 }

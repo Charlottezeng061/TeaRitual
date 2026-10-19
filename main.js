@@ -50,7 +50,6 @@ const stepNumber = document.querySelector("#step-number");
 const stepTitle = document.querySelector("#step-title");
 const stepInstruction = document.querySelector("#step-instruction");
 const progressDots = document.querySelectorAll(".progress li");
-const scene = document.querySelector(".scene");
 const tongs = document.querySelector(".tongs");
 const canister = document.querySelector(".canister");
 const scoop = document.querySelector(".scoop");
@@ -105,6 +104,9 @@ function updateGuide() {
     const isCurrentStep = index === currentStep;
 
     dot.classList.toggle("current", isCurrentStep);
+
+    /* Fill the circles for completed steps. */
+    dot.classList.toggle("done", index < currentStep);
 
     if (isCurrentStep) {
       dot.setAttribute("aria-current", "step");
@@ -228,8 +230,6 @@ function returnTongs() {
   heldLeaves.style.transform = "";
 
   tongs.classList.remove("dragging");
-  canister.classList.remove("drop-target");
-  scoop.classList.remove("drop-target");
 }
 
 /*
@@ -319,6 +319,9 @@ function changeImage(element, file, description) {
   for each illustration. Delays communicate progression; they do not represent
   real brewing times.
 */
+
+/* Adjust the tools' positions using translate().
+   Reference: https://developer.mozilla.org/en-US/docs/Web/CSS/transform-function/translate */
 function addDrag(element, stepIndex, getTargets, onSuccess) {
   let dragging = false;
   let pointerId = null;
@@ -408,6 +411,16 @@ function addDrag(element, stepIndex, getTargets, onSuccess) {
 
     busy = true;
 
+/* Place the scoop tip above the gaiwan. */
+if (stepIndex === 2) {
+  const bowl = gaiwan.getBoundingClientRect();
+
+  x += bowl.left + bowl.width * 0.5 - box.left - box.width * 0.85;
+  y += bowl.top - bowl.height * 0.2 - box.top - box.height * 0.5;
+
+  element.style.transform = `translate(${x}px, ${y}px)`;
+}
+
     if (stepIndex >= 3) {
       const targetBox = target.getBoundingClientRect();
 
@@ -419,7 +432,11 @@ function addDrag(element, stepIndex, getTargets, onSuccess) {
         y + targetBox.top + targetBox.height * 0.45 -
         (box.top + box.height * 0.85);
 
-      element.style.transform = `translate(${pourX}px, ${pourY}px)`;
+const offsetX = stepIndex === 3 ? 20 : 0;
+const offsetY = stepIndex === 3 ? -15 : 0;
+
+element.style.transform =
+  `translate(${pourX + offsetX}px, ${pourY + offsetY}px)`;
     }
 
     try {
@@ -489,7 +506,8 @@ addDrag(gaiwan, 4, function () {
 
   await wait(850);
 
-  changeImage(gaiwan, "gaiwan-open", "Open gaiwan");
+/* Close the gaiwan after pouring. */
+  changeImage(gaiwan, "gaiwan-closed", "Closed gaiwan");
   changeImage(
     pitcher,
     "fairness-pitcher-filled",
@@ -554,7 +572,7 @@ addDrag(pitcher, 5, function () {
 */
 function finishTea() {
   currentStep = steps.length;
-  pitcher.classList.remove("can-drag");
+ pitcher.classList.remove("can-drag");
   stepNumber.textContent = "06 / 06";
   stepTitle.textContent = "Your tea is ready";
   stepInstruction.textContent = "Take a moment to enjoy it.";
@@ -601,11 +619,8 @@ restartButton.addEventListener("click", function () {
 updateGuide();
 
 /*
-  Background music:
-  "Chinese Bamboo Flute & Guzheng – Relaxing Zen Music"
-  by ChineseZenMusic, via Pixabay.
-  Used under the Pixabay Content License.
-
+  Background music: "Chinese Bamboo Flute & Guzheng – Relaxing Zen Music"
+  by ChineseZenMusic, via Pixabay. Used under the Pixabay Content License.
   https://pixabay.com/music/china-chinese-bamboo-flute-amp-guzheng-relaxing-zen-music-618302/
 */
 
@@ -640,7 +655,7 @@ enterMusic.addEventListener("click", async function () {
     await backgroundMusic.play();
     musicDialog.close();
   } catch (error) {
-    enterMusic.textContent = "Try music again";
+  enterMusic.querySelector("span").textContent = "Try music again";
     console.error("Background music could not play:", error);
   }
 });
@@ -692,4 +707,131 @@ infoClose.addEventListener("click", function () {
 /* Return focus to the icon after closing the panel. */
 infoDialog.addEventListener("close", function () {
   infoButton.focus();
+});
+
+
+/* 
+Show each tea tool's name and description on hover.
+Tooltip reference: https://www.w3schools.com/css/css_tooltip.asp
+*/
+const objectInfo = [
+  {
+    selector: ".tongs",
+    name: "Tea tongs",
+    description: "Pick up tea leaves and place them in the scoop."
+  },
+  {
+    selector: ".scoop",
+    name: "Tea scoop",
+    description: "Hold the tea leaves before adding them to the gaiwan."
+  },
+  {
+    selector: ".canister",
+    name: "Tea canister",
+    description: "Store tea leaves and keep them dry."
+  },
+  {
+    selector: ".gaiwan",
+    name: "Gaiwan",
+    description: "A lidded bowl used to steep tea leaves."
+  },
+  {
+    selector: ".pitcher",
+    name: "Fairness pitcher",
+    description: "Hold the brewed tea before sharing it between the cups."
+  },
+  {
+    selector: ".kettle",
+    name: "Kettle",
+    description: "Pour hot water into the gaiwan to brew the tea."
+  },
+  {
+    selector: ".cup-one",
+    name: "Tea cup",
+    description: "A small cup for enjoying freshly brewed tea."
+  },
+  {
+    selector: ".cup-two",
+    name: "Tea cup",
+    description: "A small cup for enjoying freshly brewed tea."
+  },
+  {
+    selector: ".cup-three",
+    name: "Bamboo-patterned cup",
+    description: "A decorated cup for enjoying your tea."
+  },
+  {
+    selector: ".pet",
+    name: "Tea pet",
+    description: "A small clay companion on the tea tray."
+  }
+];
+
+/* Create one tooltip and reuse it for every object. */
+const tooltip = document.createElement("div");
+tooltip.className = "object-tooltip";
+tooltip.hidden = true;
+
+const tooltipName = document.createElement("strong");
+const tooltipDescription = document.createElement("span");
+
+tooltip.append(tooltipName, tooltipDescription);
+document.body.appendChild(tooltip);
+
+/* Check objects without changing which tool can be dragged. */
+document.addEventListener("pointermove", function (event) {
+  tooltip.hidden = true;
+
+  if (
+    event.pointerType !== "mouse" ||
+    event.buttons !== 0 ||
+    document.querySelector("dialog[open]")
+  ) {
+    return;
+  }
+
+  const match = objectInfo.find(function (item) {
+    const element = document.querySelector(item.selector);
+    const box = element.getBoundingClientRect();
+
+    return (
+      event.clientX >= box.left &&
+      event.clientX <= box.right &&
+      event.clientY >= box.top &&
+      event.clientY <= box.bottom
+    );
+  });
+
+  if (!match) return;
+
+  tooltipName.textContent = match.name;
+  tooltipDescription.textContent = match.description;
+  tooltip.hidden = false;
+
+  /* Keep the introduction inside the browser window. */
+  const left = Math.max(
+    8,
+    Math.min(event.clientX + 16, window.innerWidth - tooltip.offsetWidth - 8)
+  );
+
+  const top = Math.max(
+    8,
+    Math.min(event.clientY + 16, window.innerHeight - tooltip.offsetHeight - 8)
+  );
+
+  tooltip.style.left = `${left}px`;
+  tooltip.style.top = `${top}px`;
+});
+
+/* Hide the introduction when dragging or leaving the page. */
+document.addEventListener("pointerdown", function () {
+  tooltip.hidden = true;
+});
+
+document.documentElement.addEventListener("pointerleave", function () {
+  tooltip.hidden = true;
+});
+
+window.addEventListener("scroll", function () {
+  tooltip.hidden = true;
 });
