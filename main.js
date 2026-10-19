@@ -32,7 +32,7 @@ const steps = [
   },
   {
     title: "Serve",
-    instruction: "Drag the pitcher to each of the three tea cups."
+    instruction: "Pour a little tea over the tea pet before filling the cups."
   }
 ];
 
@@ -57,6 +57,7 @@ const heldLeaves = document.querySelector(".held-leaves");
 const gaiwan = document.querySelector(".gaiwan");
 const kettle = document.querySelector(".kettle");
 const pitcher = document.querySelector(".pitcher");
+const pet = document.querySelector(".pet");
 
 let isDragging = false;
 let startX = 0;
@@ -195,11 +196,14 @@ tongs.addEventListener("pointerup", function () {
   const centreX = tongsBox.left + tongsBox.width / 2;
   const centreY = tongsBox.top + tongsBox.height / 2;
 
-  const isInside =
-    centreX >= targetBox.left &&
-    centreX <= targetBox.right &&
-    centreY >= targetBox.top &&
-    centreY <= targetBox.bottom;
+/* Make the scoop easier to drop onto. */
+const margin = currentStep === 1 ? 30 : 0;
+
+const isInside =
+  centreX >= targetBox.left - margin &&
+  centreX <= targetBox.right + margin &&
+  centreY >= targetBox.top - margin &&
+  centreY <= targetBox.bottom + margin;
 
   returnTongs();
 
@@ -270,6 +274,7 @@ const cups = [
 ];
 let busy = false;
 const filledCups = new Set();
+let petWatered = false;
 
 /* Keep the restart option inside the guide. */
 const restartButton = document.createElement("button");
@@ -297,6 +302,11 @@ document.querySelector(".guide-box").appendChild(restartButton);
   const image = new Image();
   image.src = `assets/${name}.png`;
 });
+
+/* Play a short sound during pouring. */
+const pouringSound = new Audio("assets/pouring.mp3");
+pouringSound.volume = 0.4;
+pouringSound.preload = "auto";
 
 function wait(time) {
   return new Promise(function (resolve) {
@@ -449,6 +459,11 @@ element.style.transform =
     }
 
     try {
+  /* Follow the visitor's sound choice. */
+  if (stepIndex >= 3 && !backgroundMusic.paused) {
+    pouringSound.currentTime = 0;
+    pouringSound.play().catch(console.error);
+  }
       await onSuccess(target);
     } finally {
       returnHome();
@@ -524,14 +539,19 @@ addDrag(gaiwan, 4, function () {
   );
 
   nextStep();
+  pet.classList.add("ready");
 });
 
-/* Step six: fill each cup once, preserving the patterned cup. */
+/* Water the tea pet before filling the cups. */
 addDrag(pitcher, 5, function () {
+  if (!petWatered) {
+    return [pet];
+  }
+
   return cups.filter(function (cup) {
     return !filledCups.has(cup);
   });
-}, async function (cup) {
+}, async function (target) {
   changeImage(
     pitcher,
     "fairness-pitcher-pouring",
@@ -541,17 +561,34 @@ addDrag(pitcher, 5, function () {
   pitcher.classList.add("pouring");
   await wait(850);
 
-  if (cup === cups[2]) {
+  if (target === pet) {
+    petWatered = true;
+    pet.classList.remove("ready");
+    pet.classList.add("watered");
+
     changeImage(
-      cup,
+      pitcher,
+      "fairness-pitcher-filled",
+      "Fairness pitcher with tea"
+    );
+
+    stepInstruction.textContent =
+      "Now pour tea into each of the three cups.";
+
+    return;
+  }
+
+  if (target === cups[2]) {
+    changeImage(
+      target,
       "tea-cup-decorated-filled",
       "Filled bamboo-patterned tea cup"
     );
   } else {
-    changeImage(cup, "tea-cup-filled", "Filled tea cup");
+    changeImage(target, "tea-cup-filled", "Filled tea cup");
   }
 
-  filledCups.add(cup);
+  filledCups.add(target);
 
   if (filledCups.size === cups.length) {
     changeImage(pitcher, "fairness-pitcher-empty", "Empty fairness pitcher");
@@ -581,10 +618,12 @@ addDrag(pitcher, 5, function () {
 */
 function finishTea() {
   currentStep = steps.length;
- pitcher.classList.remove("can-drag");
+  pitcher.classList.remove("can-drag");
+
   stepNumber.textContent = "06 / 06";
   stepTitle.textContent = "Your tea is ready";
-  stepInstruction.textContent = "Take a moment to enjoy it.";
+  stepInstruction.textContent =
+  "Take a moment to enjoy it.";
 
   progressDots.forEach(function (dot) {
     dot.classList.remove("current");
@@ -600,6 +639,8 @@ restartButton.addEventListener("click", function () {
   if (busy) return;
 
   returnTongs();
+  petWatered = false;
+  pet.classList.remove("ready", "watered");
   heldLeaves.hidden = true;
   filledCups.clear();
   currentStep = 0;
@@ -739,6 +780,21 @@ const objectInfo = [
     name: "Tea canister",
     description: "Store tea leaves and keep them dry."
   },
+   {
+    selector: ".cup-one",
+    name: "Tea cup",
+    description: "A small cup for enjoying freshly brewed tea."
+  },
+  {
+    selector: ".cup-two",
+    name: "Tea cup",
+    description: "A small cup for enjoying freshly brewed tea."
+  },
+  {
+    selector: ".cup-three",
+    name: "Bamboo-patterned cup",
+    description: "A decorated cup for enjoying your tea."
+  },
   {
     selector: ".gaiwan",
     name: "Gaiwan",
@@ -753,21 +809,6 @@ const objectInfo = [
     selector: ".kettle",
     name: "Kettle",
     description: "Pour hot water into the gaiwan to brew the tea."
-  },
-  {
-    selector: ".cup-one",
-    name: "Tea cup",
-    description: "A small cup for enjoying freshly brewed tea."
-  },
-  {
-    selector: ".cup-two",
-    name: "Tea cup",
-    description: "A small cup for enjoying freshly brewed tea."
-  },
-  {
-    selector: ".cup-three",
-    name: "Bamboo-patterned cup",
-    description: "A decorated cup for enjoying your tea."
   },
   {
     selector: ".pet",
@@ -803,12 +844,21 @@ document.addEventListener("pointermove", function (event) {
     const element = document.querySelector(item.selector);
     const box = element.getBoundingClientRect();
 
-    return (
-      event.clientX >= box.left &&
-      event.clientX <= box.right &&
-      event.clientY >= box.top &&
-      event.clientY <= box.bottom
-    );
+/* Keep the tongs' hover area closer to the drawing. */
+const top = item.selector === ".tongs"
+  ? box.top + box.height * 0.4
+  : box.top;
+
+const bottom = item.selector === ".tongs"
+  ? box.top + box.height * 0.7
+  : box.bottom;
+
+return (
+  event.clientX >= box.left &&
+  event.clientX <= box.right &&
+  event.clientY >= top &&
+  event.clientY <= bottom
+);
   });
 
   if (!match) return;
@@ -843,4 +893,15 @@ document.documentElement.addEventListener("pointerleave", function () {
 
 window.addEventListener("scroll", function () {
   tooltip.hidden = true;
+});
+
+/* Add a small surprise when the tea pet is clicked. */
+pet.addEventListener("click", function () {
+  if (busy || isDragging) return;
+
+  pet.classList.add("wiggle");
+});
+
+pet.addEventListener("animationend", function () {
+  pet.classList.remove("wiggle");
 });

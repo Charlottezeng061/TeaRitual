@@ -355,12 +355,16 @@ h1 {
 .guide-box {
   position: relative;
   left: 40px;
- flex: 0 1 620px;
+ flex: 0 1 760px;
  padding: 10px 20px;
   min-width: 0;
   border-width: 1.5px;
   border-style: solid;
   border-radius: 18px;
+}
+/* Leave room for the restart button. */
+.guide-box:has(.restart:not([hidden])) p {
+  padding-right: 120px;
 }
 
 h2 {
@@ -517,14 +521,14 @@ h2 {
 
 /* Place the brewing vessels behind the serving cups. */
 .gaiwan {
-  --left: 35%;
-  --top: 25%;
+  --left: 38%;
+  --top: 23%;
   --width: 16%;
 }
 
 .pitcher {
-  --left:53%;
-  --top: 20%;
+  --left:54%;
+  --top: 17%;
   --width: 18%;
 }
 
@@ -555,10 +559,9 @@ h2 {
   --left: 60%;
 }
 
-
 .pet {
-  --left: 25%;
-  --top: 30%;
+  --left: 27%;
+  --top: 25%;
   --width: 11%;
 }
 
@@ -765,4 +768,25 @@ h2 {
 html,
 body {
   overflow-anchor: none;
+}
+/* Darken the tea pet slightly when wet. */
+.pet.watered {
+  filter: brightness(0.9);
+}
+
+/* Let the tea pet respond to clicks. */
+.scene img.pet {
+  pointer-events: auto;
+}
+
+.pet.wiggle {
+  animation: wiggle 500ms steps(4);
+  transform-origin: center bottom;
+}
+
+@keyframes wiggle {
+  0%, 100% { rotate: 0deg; }
+  25% { rotate: -5deg; }
+  50% { rotate: 5deg; }
+  75% { rotate: -3deg; }
 }
