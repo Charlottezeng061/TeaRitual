@@ -6,10 +6,77 @@
  <link rel="stylesheet" href="https://use.typekit.net/kda0bpx.css">
   <title>Tea Ritual</title>
   <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
+  <script src="main.js" defer></script>
 </head>
 
 <body>
+<!-- Project introduction. -->
+<button class="info-button" type="button"
+  aria-label="About Tea Ritual"
+  aria-haspopup="dialog"
+  aria-controls="info-dialog">
+  <img src="assets/info.png" alt="">
+</button>
+
+<dialog id="info-dialog" aria-labelledby="info-title">
+  <button class="info-close" type="button"
+    aria-label="Close project introduction">×
+  </button>
+
+  <h2 id="info-title">About Tea Ritual</h2>
+
+  <p>
+    Tea Ritual is a small interactive experience inspired by
+    Chinese tea-making.
+  </p>
+
+  <p>
+    Drag the hand-drawn tools and follow the guide to prepare
+    and share a cup of tea.
+  </p>
+
+  <p>
+    Through gentle movement and simple actions, this project
+    invites you to slow down and enjoy a little moment for tea.
+  </p>
+</dialog>
+
+<!-- Music selection dialog -->
+<dialog class="music-dialog" aria-labelledby="welcome-title">
+  <img class="welcome-cup"
+    src="assets/tea-cup-decorated-filled.png"
+    alt=""
+    aria-hidden="true">
+
+  <h2 id="welcome-title">Time for tea</h2>
+  <p>Choose how you would like to begin.</p>
+
+  <div class="sound-options">
+    <button id="enter-music" type="button">
+      <img src="assets/music.png" alt="">
+      <span>With music</span>
+    </button>
+
+    <button id="enter-quiet" type="button">
+      <img src="assets/music-off.png" alt="">
+      <span>Quiet moment</span>
+    </button>
+  </div>
+
+  <small>You can change the sound at any time.</small>
+</dialog>
+
+  <button class="music-button" type="button"
+    aria-label="Play background music"
+    aria-pressed="false">
+
+    <img id="music-icon" src="assets/music-off.png" alt="">
+  </button>
+
+  <audio id="background-music" loop preload="none">
+    <source src="assets/background-music.mp3" type="audio/mpeg">
+  </audio>
+
   <header class="top-bar">
     <div class="title">
       <h1>Tea Ritual</h1>
@@ -36,62 +103,88 @@
   </header>
 
   <main class="scene" aria-label="Tea table">
+      <img class="window"
+    src="assets/window.png"
+    alt="Wooden window"
+    draggable="false">
+
     <div class="table" aria-hidden="true"></div>
 
-    <img class="tray"
-      src="assets/tea-tray.png"
-      alt="Wooden tea tray"
-      draggable="false">
+  <!-- Tea mat underneath the tray -->
+  <img class="tea-mat"
+    src="assets/tea-mat.png"
+    alt="Tea mat"
+    draggable="false">
 
-    <img class="object canister"
-      src="assets/tea-canister.png"
-      alt="Tea canister"
-      draggable="false">
+  <!-- Wooden tea tray -->
+  <img class="tray"
+    src="assets/tea-tray.png"
+    alt="Wooden tea tray"
+    draggable="false">
 
-    <img class="object scoop"
-      src="assets/tea-scoop.png"
-      alt="Tea scoop"
-      draggable="false">
+  <!-- Tea tools and decorations -->
+<img class="vase"
+    src="assets/vase.png"
+    alt="Vase with bamboo"
+    draggable="false">
 
-    <img class="object tongs"
-      src="assets/tea-tongs.png"
-      alt="Tea tongs"
-      draggable="false">
+  <img class="canister"
+    src="assets/tea-canister.png"
+    alt="Tea canister"
+    draggable="false">
 
-    <img class="object gaiwan"
-      src="assets/gaiwan-open.png"
-      alt="Open gaiwan"
-      draggable="false">
+  <img class="scoop"
+    src="assets/tea-scoop-empty.png"
+    alt="Tea scoop"
+    draggable="false">
 
-    <img class="object pitcher"
-      src="assets/fairness-pitcher-empty.png"
-      alt="Empty fairness pitcher"
-      draggable="false">
+  <img class="tongs"
+    src="assets/tea-tongs.png"
+    alt="Tea tongs"
+    draggable="false">
 
-    <img class="object kettle"
-      src="assets/kettle.png"
-      alt="Kettle"
-      draggable="false">
+    <img class="held-leaves"
+    src="assets/tea-leaves.png"
+    alt=""
+    aria-hidden="true"
+    draggable="false"
+    hidden>
 
-    <img class="object cup cup-one"
-      src="assets/tea-cup-empty.png"
-      alt="Empty tea cup one"
-      draggable="false">
+  <img class="gaiwan"
+    src="assets/gaiwan-open.png"
+    alt="Open gaiwan"
+    draggable="false">
 
-    <img class="object cup cup-two"
-      src="assets/tea-cup-empty.png"
-      alt="Empty tea cup two"
-      draggable="false">
+  <img class="pitcher"
+    src="assets/fairness-pitcher-empty.png"
+    alt="Empty fairness pitcher"
+    draggable="false">
 
-    <img class="object cup cup-three"
-      src="assets/tea-cup-decorated.png"
-      alt="Bamboo-patterned tea cup"
-      draggable="false">
+  <img class="kettle"
+    src="assets/kettle.png"
+    alt="Kettle"
+    draggable="false">
 
-    <img class="object pet"
-      src="assets/tea-pet.png"
-      alt="Tea pet"
-      draggable="false">
-  </main>
+  <img class="cup-one"
+    src="assets/tea-cup-empty.png"
+    alt="Empty tea cup one"
+    draggable="false">
+
+  <img class="cup-two"
+    src="assets/tea-cup-empty.png"
+    alt="Empty tea cup two"
+    draggable="false">
+
+  <img class="cup-three"
+    src="assets/tea-cup-decorated.png"
+    alt="Bamboo-patterned tea cup"
+    draggable="false">
+
+  <img class="pet"
+    src="assets/tea-pet.png"
+    alt="Tea pet"
+    draggable="false">
+
+</main>
 </body>
 </html>

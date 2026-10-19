@@ -1,6 +1,6 @@
 /* COLORS */
 :root {
-  --color1: #f5f1e7; /* Page background */
+  --color1: #f5f1e7; /* Background */
   --color2: #3a2b25; /* Main text and outlines */
   --color3: #7f927d; /* Step counter */
   --color4: #a77d60; /* Subtitle */
@@ -12,10 +12,6 @@
 body {
   color: var(--color2);
   background-color: var(--color1);
-}
-
-.title p {
-  color: var(--color4);
 }
 
 /* Highlight the step counter with muted green. */
@@ -36,7 +32,41 @@ body {
 
 /* TYPOGRAPHY */
 
-/* Use a simple, readable font for supporting text. */
+#info-dialog p {
+  font-family: "Comic Sans MS", "Chalkboard SE", sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* Use one consistent font throughout the welcome panel. */
+.music-dialog,
+.music-dialog p,
+.music-dialog button,
+.music-dialog small {
+  font-family: "Comic Sans MS", "Chalkboard SE", sans-serif;
+  font-style: normal;
+  letter-spacing: 0;
+}
+
+.music-dialog h2 {
+  font-family:  Georgia, serif;
+  font-size: 30px;
+  font-weight: 400;
+  font-style: normal;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.music-dialog p,
+.music-dialog button {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.music-dialog small {
+  font-size: 12px;
+  font-weight: 400;
+}
 body {
   font-family: Arial, sans-serif;
   font-size: 16px;
@@ -45,7 +75,6 @@ body {
   line-height: 1.5;
 }
 
-/* Keep the title compact in the upper-left corner. */
 h1 {
   font-family: "playwrite-cc-us-trad", sans-serif;
   font-size: 36px;
@@ -54,14 +83,12 @@ h1 {
   line-height: 1.3;
 }
 
-
-/* Keep the step counter small and understated. */
 #step-number {
   font-size: 12px;
   letter-spacing: 2px;
 }
 
-/* Match the step heading to the main title. */
+
 h2 {
   font-family: Georgia, serif;
   font-size: 22px;
@@ -79,43 +106,54 @@ h2 {
   line-height: 1.6;
 }
 
+
 /* Adjust text sizes for smaller screens. */
 @media (max-width: 760px) {
+  #step-number {
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+
   h2 {
-    font-size: 17px;
+    font-size: 15px;
+    letter-spacing: 1px;
   }
 
   .guide-box p {
-    font-size: 16px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .restart {
+    font-size: 13px;
   }
 }
 
 
 /* RESET AND PAGE LAYOUT */
 
-/*
-  Include padding and borders in an element's declared size.
-  This makes width and height calculations easier to manage.
-*/
+/* Include padding and borders in an element's declared size.
+  This makes width and height calculations easier to manage */
 * {
   box-sizing: border-box;
 }
 
-/* Remove the browser's default page margin. */
+/* Position the background window relative to the page. */
 body {
   margin: 0;
+  position: relative;
+  overflow-x: clip;
 }
 
-/*
-  Stack the title above the guide row.
-  The header spans the page, with equal spacing on both sides.
-*/
+/* Stack the title above the guide row.
+  The header spans the page, with equal spacing on both sides. */
 .top-bar {
   display: flex;
   flex-direction: column;
   align-items: stretch;
   gap: 24px;
-
+  position: relative;
+  z-index: 1;
   max-width: 1500px;
   margin: 0 auto;
   padding: 24px 40px;
@@ -135,12 +173,186 @@ h1 {
   margin: 0;
 }
 
+.info-button {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 20;
+
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  padding: 8px;
+
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.info-button img {
+  display: block;
+  width: 36px;
+  height: 36px;
+}
+
+/* Match the introduction panel to the tea scene. */
+#info-dialog {
+  position: relative;
+  width: 420px;
+  max-width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 32px;
+
+  border: 1px solid var(--color2);
+  border-radius: 12px;
+  color: var(--color2);
+  background-color: var(--color1);
+}
+
+#info-dialog::backdrop {
+  background-color: rgb(58 43 37 / 25%);
+}
+
+#info-dialog h2 {
+  margin: 0 24px 18px 0;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+
+/* Place the close control inside the panel. */
+.info-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+
+  border: none;
+  color: var(--color2);
+  background: none;
+  font-size: 26px;
+  cursor: pointer;
+}
+
+.info-button:focus-visible,
+.info-close:focus-visible {
+  outline: 1px dashed var(--color2);
+  outline-offset: 2px;
+}
+
+/* Keep the welcome panel light and consistent with the tea setting. */
+.music-dialog {
+  width: 420px;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 24px 30px 28px; 
+  border: 1px solid var(--color2);
+  border-radius: 18px;
+  color: var(--color2);
+  background-color: var(--color1);
+  text-align: center;
+}
+
+.music-dialog::backdrop {
+  background-color: rgb(58 43 37 / 25%);
+}
+
+/* Use an existing illustration as the visual focus. */
+.welcome-cup {
+  display: block;
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+  margin: 0 auto;
+}
+
+.music-dialog h2 {
+  margin: 0 0 10px;
+  line-height: 1.3;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.music-dialog p {
+  margin: 0 0 22px;
+  line-height: 1.5;
+}
+
+/* Present sound choices side by side. */
+.sound-options {
+  display: flex;
+  gap: 14px;
+}
+
+.sound-options button { 
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+
+  padding: 18px 8px;
+  border: 1px solid var(--color6);
+  border-radius: 12px;
+  color: var(--color2);
+  background: none;
+  cursor: pointer;
+}
+
+.sound-options img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.music-dialog .sound-options button:focus,
+.music-dialog .sound-options button:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.sound-options button:hover {
+  background-color: var(--color5);
+}
+
+.music-dialog small {
+  display: block;
+  margin-top: 20px;
+  line-height: 1.5;
+}
+
+.music-button {
+  position: fixed;
+  top: 20px;
+  bottom: auto;
+  right: 76px;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.music-button img {
+  display: block;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
 /* GUIDE LAYOUT */
 
-/*
-  Place the guide box on the left and the progress circles on the right.
-  Let the gap expand when more horizontal space is available.
-*/
+/* Place the guide box on the left and the progress circles on the right.
+  Let the gap expand when more horizontal space is available. */
 .guide {
   display: flex;
   justify-content: space-between;
@@ -149,15 +361,14 @@ h1 {
   width: 100%;
 }
 
-/*
-  Give the instruction box a comfortable width.
-  Allow it to shrink when the progress indicator needs more space.
-*/
+/* Give the instruction box a comfortable width.
+  Allow it to shrink when the progress indicator needs more space. */
 .guide-box {
+  position: relative;
+  left: 40px;
   flex: 0 1 560px;
   min-width: 0;
   padding: 18px 24px;
-
   border-width: 1.5px;
   border-style: solid;
   border-radius: 18px;
@@ -170,7 +381,6 @@ h2 {
 .guide-box p {
   margin: 0;
 }
-
 
 /* Arrange the circles with a connecting line behind them. */
 .progress {
@@ -201,34 +411,19 @@ h2 {
   background-color: var(--color2);
 }
 
-/* Reduce spacing and circle size on smaller screens. */
-@media (max-width: 760px) {
-  .progress {
-    gap: 24px;
-    align-self: flex-end;
-  }
-
-  .progress li {
-    flex-basis: 20px;
-    width: 20px;
-    height: 20px;
-  }
-}
-
 /* TABLE AND SCENE */
 
 .scene {
   position: relative;
   width: 100%;
   aspect-ratio: 1100 / 530;
-  margin-top: -70px;
-  overflow: hidden;
+  margin-top: -100px;
+  overflow: visible;
 }
 
-/*
-  Create a table surface across the lower part of the scene.
-  The top border separates the background wall from the table.
-*/
+/* Create a table surface across the lower part of the scene.
+  The top border separates the background wall from the table. */
+
 .table {
   position: absolute;
   inset: 27% 0 0;
@@ -236,41 +431,86 @@ h2 {
   border-top-width: 1px;
   border-top-style: solid;
 }
+/* Keep the background layers inside the scene. */
+.scene {
+  isolation: isolate;
+}
 
-/*
-  Position the tray as the main visual anchor.
-  Its height follows the original PNG proportions automatically.
-*/
+/* Keep the window beside the table as the scene scales. */
+.window {
+  position: absolute;
+  top: auto;
+  bottom: 68%;
+  right: -12%;
+  width: 40%;
+  opacity: 0.45;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Keep the table in front of the window. */
+.table {
+  z-index: 1;
+}
+
+/* Let the mat extend slightly beyond the tray. */
+.tea-mat {
+  position: absolute;
+  left: 5%;
+  top: 2%;
+  width: 92%;
+  z-index: 2;
+  pointer-events: none;
+  /* Crop excess transparent space without stretching the mat. */
+ height: 98%;
+ object-fit: cover;
+ object-position: top; 
+}
+
+/* Position the tea tools and vase above the tray. */
+.vase,
+.canister,
+.scoop,
+.tongs,
+.gaiwan,
+.pitcher,
+.kettle,
+.cup-one,
+.cup-two,
+.cup-three,
+.pet {
+  position: absolute;
+  left: var(--left);
+  top: var(--top);
+  width: var(--width);
+  z-index: 4;
+  user-select: none;
+}
+
+.vase {
+  --left: 85%;
+  --top: 0%;
+  --width: 21%;
+  z-index: 3;
+}
+
 .tray {
   position: absolute;
   left: 10%;
   top: 1%;
   width: 78%;
-}
-
-/*
-  Share the positioning rules across all tea tools.
-  Each object defines its own left, top and width values below.
-
-  The transparent space inside each PNG is included in its size.
-*/
-.object {
-  position: absolute;
-  left: var(--left);
-  top: var(--top);
-  width: var(--width);
-
-  /* Prevent accidental image selection during future dragging. */
-  user-select: none;
+  height: 99%;
+  object-fit: contain;
+  object-position: center top;
+  z-index: 3;
 }
 
 
 /* DESKTOP OBJECT POSITIONS*/
 
-/* Place the canister and leaf-handling tools on the left. */
 .canister {
-  --left: 0%;
-  --top: 15%;
+  --left: 8%;
+  --top: 18%;
   --width: 16%;
 }
 
@@ -288,31 +528,32 @@ h2 {
 
 /* Place the brewing vessels behind the serving cups. */
 .gaiwan {
-  --left: 29%;
-  --top: 17%;
-  --width: 20%;
+  --left: 35%;
+  --top: 25%;
+  --width: 16%;
 }
 
 .pitcher {
-  --left: 49%;
-  --top: 21%;
+  --left:53%;
+  --top: 20%;
   --width: 18%;
 }
 
 /* Keep the kettle beside the tray on the right. */
 .kettle {
-  --left:78%;
-  --top: 18%;
+  --left:80%;
+  --top: 25%;
   --width: 25%;
 }
 
-/* Give the three cups the same size and vertical position. */
-.cup {
-  --top: 53%;
+/* Keep the three cups the same size and height. */
+.cup-one,
+.cup-two,
+.cup-three {
+  --top: 48%;
   --width: 12%;
 }
 
-/* Space the cups evenly across the front of the tray. */
 .cup-one {
   --left: 30%;
 }
@@ -325,111 +566,183 @@ h2 {
   --left: 60%;
 }
 
-/* Place the tea pet on the right side of the tray. */
+
 .pet {
-  --left: 70%;
-  --top: 39%;
+  --left: 25%;
+  --top: 30%;
   --width: 11%;
 }
 
-
-/*  MOBILE LAYOUT*/
-
+/* Adjust the guide without rearranging the tea setting. */
 @media (max-width: 760px) {
   .top-bar {
     gap: 20px;
     padding: 20px 18px;
   }
 
-  /*
-    Stack the guide box and progress indicator on small screens
-    so neither becomes too narrow.
-  */
-  .guide {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 22px;
-  }
+/* Keep the guide on the left and smaller circles at the upper right. */
+.guide {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+}
 
-  .guide-box {
-    flex: none;
-    width: 100%;
-    padding: 16px 18px;
-  }
+/* Make the guide box shorter and align it to the left. */
+.guide-box {
+  left: 0;
+  margin-left: 0;
+  flex: 1;
+  width: auto;
+  min-width: 0;
+  padding: 8px 12px;
+}
 
-  /* Give the scene more vertical space on narrow screens. */
+/* Position the progress circles at the top of the guide row. */
+.progress {
+  align-self: flex-start;
+  gap: 10px;
+  margin: 6px 0 0;
+  background-size: 100% 1px;
+}
+
+/* Reduce circle size without stretching. */
+.progress li {
+  flex: 0 0 12px;
+  width: 12px;
+  height: 12px;
+  border-width: 1px;
+}
+
+/* Reduce spacing inside the guide box. */
+.guide-box h2 {
+  margin: 4px 0;
+}
+
+.guide-box p {
+  margin: 0;
+}
+
+  /* Keep the scene clear of the taller mobile guide. */
   .scene {
-    aspect-ratio: 1.25;
     margin-top: 0;
   }
+}
 
-  /* Enlarge the tray relative to the screen width. */
-  .tray {
-    left: 5%;
-    top: 24%;
-    width: 91%;
+/* Allow the interactive tea tools to receive touch dragging. */
+.tongs,
+.scoop,
+.kettle,
+.gaiwan,
+.pitcher {
+  touch-action: none;
+}
+
+/* Show a grab cursor on the interactive tools. */
+.tongs,
+.scoop,
+.kettle,
+.gaiwan,
+.pitcher {
+  cursor: grab;
+}
+
+/* Keep the moving tool above the other illustrations. */
+.tongs.dragging,
+.scoop.dragging,
+.kettle.dragging,
+.gaiwan.dragging,
+.pitcher.dragging {
+  cursor: grabbing;
+  z-index: 10;
+}
+
+/* Highlight the receiving object during a drag. */
+.drop-target {
+  outline: 1px dashed var(--color3);
+  outline-offset: 3px;
+}
+
+/* Briefly tilt the scoop without replacing its drag position. */
+.scoop.tipping {
+  rotate: 18deg;
+}
+
+/* Add a small stepped movement while pouring. */
+.pouring {
+  animation: pour 700ms steps(3, end);
+}
+
+@keyframes pour {
+  0%, 100% {
+    rotate: 0deg;
   }
 
-  /* Reposition the leaf-handling tools along the left side. */
-  .canister {
-    --left: 0%;
-    --top: 20%;
-    --width: 20%;
+  40% {
+    rotate: -2deg;
   }
 
-  .scoop {
-    --left: 0%;
-    --top: 40%;
-    --width: 21%;
+  70% {
+    rotate: 1deg;
+  }
+}
+
+/* Fill all progress circles when the ritual is complete. */
+.progress li.done {
+  background-color: var(--color2);
+}
+
+/* Keep the restart option inside the guide. */
+.restart {
+  margin-top: 12px;
+  padding: 4px 0;
+  border: none;
+  border-bottom: 1px solid var(--color2);
+  color: var(--color2);
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Respect reduced-motion preferences. */
+@media (prefers-reduced-motion: reduce) {
+  .pouring {
+    animation: none;
   }
 
-  .tongs {
-    --left: 0%;
-    --top: 55%;
-    --width: 22%;
+  .scoop.tipping {
+    rotate: none;
   }
+}
 
-  /* Keep the brewing vessels behind the cups. */
-  .gaiwan {
-    --left: 24%;
-    --top: 33%;
-    --width: 26%;
-  }
+/* Position the collected leaves above the tea tools. */
+.held-leaves {
+  position: absolute;
+  width: 9%;
+  z-index: 11;
+  pointer-events: none;
+}
 
-  .pitcher {
-    --left: 49%;
-    --top: 33%;
-    --width: 23%;
-  }
+/* Keep the leaves hidden until they are collected. */
+.held-leaves[hidden] {
+  display: none;
+}
 
-  .kettle {
-    --left: 77%;
-    --top: 13%;
-    --width: 24%;
-  }
+/* Prevent transparent image areas from blocking the active tool. */
+.scene img {
+  pointer-events: none;
+}
 
-  /* Keep the serving cups aligned across the front of the tray. */
-  .cup {
-    --top: 55%;
-    --width: 15%;
-  }
+/* Only the tool needed for the current step can receive dragging. */
+.scene img.can-drag {
+  pointer-events: auto;
+  cursor: grab;
+}
 
-  .cup-one {
-    --left: 24%;
-  }
-
-  .cup-two {
-    --left: 42%;
-  }
-
-  .cup-three {
-    --left: 60%;
-  }
-
-  /* Keep the tea pet on the right side of the tray. */
-  .pet {
-    --left: 68%;
-    --top: 40%;
-    --width: 15%;
-  }
+/* Remove focus outlines from the top-right controls. */
+.music-button:focus,
+.music-button:focus-visible,
+.info-button:focus,
+.info-button:focus-visible {
+  outline: none;
+  box-shadow: none;
 }
