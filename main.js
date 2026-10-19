@@ -308,6 +308,13 @@ const pouringSound = new Audio("assets/pouring.mp3");
 pouringSound.volume = 0.4;
 pouringSound.preload = "auto";
 
+/* the leaf and completion sounds. */
+const leavesSound = new Audio("assets/tea-leaves.mp3");
+leavesSound.volume = 1;
+
+const readySound = new Audio("assets/tea-ready.mp3");
+readySound.volume = 0.3;
+
 function wait(time) {
   return new Promise(function (resolve) {
     setTimeout(resolve, time);
@@ -489,12 +496,19 @@ addDrag(scoop, 2, function () {
   return [gaiwan];
 }, async function () {
   scoop.classList.add("tipping");
-  await wait(500);
-
   changeImage(scoop, "tea-scoop-empty", "Empty tea scoop");
   changeImage(gaiwan, "gaiwan-with-leaves", "Gaiwan with tea leaves");
 
-  nextStep();
+  if (!backgroundMusic.paused) {
+    leavesSound.currentTime = 0;
+    leavesSound.play().catch(console.error);
+  }
+
+  await wait(500);
+
+  leavesSound.pause();
+  leavesSound.currentTime = 0;
+nextStep();
 });
 
 /* Step four: pour water and briefly steep the tea. */
@@ -507,17 +521,12 @@ addDrag(kettle, 3, function () {
   await wait(850);
 
   changeImage(kettle, "kettle", "Kettle");
-  changeImage(gaiwan, "gaiwan-with-tea", "Gaiwan with tea");
-
-  await wait(350);
-
   changeImage(gaiwan, "gaiwan-closed", "Covered gaiwan");
   stepInstruction.textContent = "Let the tea steep for a moment.";
 
   await wait(1200);
 
   changeImage(gaiwan, "gaiwan-with-tea", "Steeped tea in the gaiwan");
-
   nextStep();
 });
 
@@ -632,6 +641,11 @@ function finishTea() {
   });
 
   restartButton.hidden = false;
+  /* Play a gentle sound when the tea is ready. */
+if (!backgroundMusic.paused) {
+  readySound.currentTime = 0;
+  readySound.play().catch(console.error);
+}
 }
 
 /* Restore the starting illustrations and guide. */
@@ -682,7 +696,7 @@ const musicDialog = document.querySelector(".music-dialog");
 const enterMusic = document.querySelector("#enter-music");
 const enterQuiet = document.querySelector("#enter-quiet");
 
-backgroundMusic.volume = 0.15;
+backgroundMusic.volume = 0.1;
 
 /* Match the icon and accessible label to the playback state. */
 function updateMusicControl() {
@@ -904,4 +918,38 @@ pet.addEventListener("click", function () {
 
 pet.addEventListener("animationend", function () {
   pet.classList.remove("wiggle");
+});
+
+/* Switch between the introduction and credits. */
+const aboutPage = document.querySelector("#about-page");
+const creditsPage = document.querySelector("#credits-page");
+const showCredits = document.querySelector("#show-credits");
+const showAbout = document.querySelector("#show-about");
+
+function switchInfoPage(showingCredits) {
+  aboutPage.hidden = showingCredits;
+  creditsPage.hidden = !showingCredits;
+
+  infoDialog.setAttribute(
+    "aria-labelledby",
+    showingCredits ? "credits-title" : "info-title"
+  );
+
+  infoDialog.scrollTop = 0;
+  (showingCredits ? showAbout : showCredits).focus();
+}
+
+showCredits.addEventListener("click", function () {
+  switchInfoPage(true);
+});
+
+showAbout.addEventListener("click", function () {
+  switchInfoPage(false);
+});
+
+/* Return to About when the panel closes. */
+infoDialog.addEventListener("close", function () {
+  aboutPage.hidden = false;
+  creditsPage.hidden = true;
+  infoDialog.setAttribute("aria-labelledby", "info-title");
 });

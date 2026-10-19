@@ -790,3 +790,56 @@ body {
   50% { rotate: 5deg; }
   75% { rotate: -3deg; }
 }
+
+/* Keep the credits compact and readable. */
+.credits {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color6);
+}
+
+.credits h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+}
+
+#info-dialog .credits p {
+  margin: 8px 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.credits a {
+  color: inherit;
+  text-underline-offset: 3px;
+}
+
+/* Style the page controls inside the info panel. */
+.info-nav {
+  display: block;
+  margin: 20px 0 0 auto;
+  padding: 6px 12px;
+  border: 1px solid var(--color2);
+  border-radius: 8px;
+  color: var(--color2);
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Remove the repeated heading and divider on the credits page. */
+#credits-page .credits {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+#credits-page .credits h3 {
+  display: none;
+}
+
+/* Match links to the text colour. */
+#info-dialog a,
+#info-dialog a:visited {
+  color: var(--color2);
+}
