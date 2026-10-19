@@ -68,11 +68,10 @@ let moveY = 0;
 /*
   GUIDANCE AND USABILITY
 
-  One short instruction explains the current action, while numbered steps and
-  circles indicate progress. Only the required tool receives the can-drag class.
-  This reduces accidental actions and prevents transparent areas of inactive
-  PNG images from blocking the intended tool. The guide also uses aria-current
-  to identify the active step. 
+  The guide tells users what to do next, and the circles show their progress.
+  Only the tool needed for the current step can be dragged. This helps avoid
+  mistakes and stops other images from blocking it.
+  aria-current marks the active step for screen readers. 
 */
 function updateGuide() {
   const step = steps[currentStep];
@@ -126,19 +125,13 @@ function nextStep() {
 
 /* DRAGGING REFERENCES
 
-  JavaScript.info, "Drag'n'Drop with mouse events":
+  pointerdown, pointermove and pointerup handle dragging.
+  setPointerCapture() keeps receiving events outside the image.
+
+  References:
   https://javascript.info/mouse-drag-and-drop
-  This tutorial explains the press, move, and release pattern. This prototype
-  uses pointer events rather than the tutorial's mouse-event implementation.
-
-  MDN Web Docs, "Pointer events":
   https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events
-  Reference for handling mouse, touch, and pen through pointer events.
-
-  MDN Web Docs, "Element: setPointerCapture() method":
   https://developer.mozilla.org/en-US/docs/Web/API/Element/setPointerCapture
-  Reference for keeping pointer events attached to a dragged element after
-  the pointer leaves its image boundary.
 */
 tongs.addEventListener("pointerdown", function (event) {
   if (currentStep > 1 || isDragging || busy || event.button !== 0) return;
@@ -172,19 +165,13 @@ tongs.addEventListener("pointermove", function (event) {
   }
 });
 
-/*
-  DROP DETECTION AND ERROR RECOVERY
+/* DROP DETECTION AND ERROR RECOVERY
 
-  MDN Web Docs, getBoundingClientRect() method:
-  https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
-  Reference for measuring element positions relative to the viewport.
+  Check whether the tool is dropped inside the target.
+  An unsuccessful drop returns it to its starting position.
+  Transparent image margins can affect accuracy.
 
-  The prototype compares the dragged image centre with the target rectangle.
-  A rectangular target is deliberately forgiving because precise placement is
-  less important than understanding the ritual. An unsuccessful drop returns
-  the tool without advancing the guide or displaying a warning. However,
-  transparent margins can make the hit area differ from the visible drawing.
-  Future refinement should use carefully aligned assets or custom target zones.
+  Reference: https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
 */
 tongs.addEventListener("pointerup", function () {
   if (!isDragging) return;
@@ -224,7 +211,7 @@ const isInside =
 tongs.addEventListener("pointercancel", returnTongs);
 tongs.addEventListener("lostpointercapture", returnTongs);
 
-/* Return the tongs and remove target highlights. */
+/* Return the tongs and held leaves to their start positions. */
 function returnTongs() {
   isDragging = false;
   moveX = 0;
@@ -236,7 +223,7 @@ function returnTongs() {
   tongs.classList.remove("dragging");
 }
 
-/*
+/* 
   LEAF POSITIONING
 
   Keeping export dimensions consistent would make future state changes easier
@@ -329,16 +316,31 @@ function changeImage(element, file, description) {
 /*
   REUSABLE INTERACTION AND FEEDBACK
 
-  The remaining tools share one drag function, but each receives its own target
-  and successful-drop action. A busy flag prevents new actions during the illustration changes.
-  Pointer cancellation returns the tool, reducing the chance of a stranded drag.
-  The common pouring offset is approximate and may need separate calibration
-  for each illustration. Delays communicate progression; they do not represent
-  real brewing times.
+  The tools use the same drag function, with different targets and actions.
+  The busy flag stops users from dragging while an animation is playing.
+  If dragging is cancelled, the tool returns to its starting position.
+
+  Pouring positions may need adjusting for each image. Short pauses help
+  show what is happening, but they are much shorter than real brewing times.
 */
 
-/* Adjust the tools' positions using translate().
-   Reference: https://developer.mozilla.org/en-US/docs/Web/CSS/transform-function/translate */
+/*
+  PLAYTESTING AND FEEDBACK
+
+  A friend found it difficult to pour tea into the cups. I enlarged the
+  receiving areas and used the pointer's release position for serving.
+  This makes the action more forgiving and supports the calm atmosphere.
+
+  Sound effects reinforce successful actions. Visitors can choose a quiet
+  experience, so sound is additional feedback rather than a requirement
+  for understanding the steps.
+*/
+
+/* 
+   Adjust the tools' positions using translate().
+   Reference: https://developer.mozilla.org/en-US/docs/Web/CSS/transform-function/translate
+ */
+
 function addDrag(element, stepIndex, getTargets, onSuccess) {
   let dragging = false;
   let pointerId = null;
@@ -617,13 +619,15 @@ addDrag(pitcher, 5, function () {
 /*
   COMPLETION AND FUTURE DEVELOPMENT
 
-  The finished setting remains visible, and restarting is offered within the
-  existing guide. This preserves continuity instead of moving to a separate
-  ending page. Challenges would include reliable
-  pouring alignment, smaller touch targets, keyboard controls, asset loading,
-  and testing with people unfamiliar with gaiwans. Short user sessions could
-  reveal whether the highlighted targets and instructions are understandable.
+ The tea stays on the table when the steps are finished.
+  Users can make tea again using the button in the guide.
 
+  In a larger project, I could add more tea tools or tea types.
+  The same drag function could be reused for these actions.
+
+  I would still need to improve pouring positions, make the tools easier
+  to use on small screens, and add keyboard controls. More testing could
+  help check whether the instructions and drop areas are clear.
 */
 function finishTea() {
   currentStep = steps.length;
@@ -641,6 +645,7 @@ function finishTea() {
   });
 
   restartButton.hidden = false;
+
   /* Play a gentle sound when the tea is ready. */
 if (!backgroundMusic.paused) {
   readySound.currentTime = 0;
