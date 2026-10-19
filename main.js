@@ -383,18 +383,27 @@ function addDrag(element, stepIndex, getTargets, onSuccess) {
     if (!dragging || event.pointerId !== pointerId) return;
 
     const box = element.getBoundingClientRect();
-    const centreX = box.left + box.width / 2;
-    const centreY = box.top + box.height / 2;
+   /* Use the pointer position when serving tea. */
+  const centreX = stepIndex === 5
+  ? event.clientX
+  : box.left + box.width / 2;
+
+const centreY = stepIndex === 5
+  ? event.clientY
+  : box.top + box.height / 2;
 
     const target = getTargets().find(function (item) {
       const targetBox = item.getBoundingClientRect();
 
-      return (
-        centreX >= targetBox.left &&
-        centreX <= targetBox.right &&
-        centreY >= targetBox.top &&
-        centreY <= targetBox.bottom
-      );
+    /* Make the cups easier to drop onto. */
+    const margin = stepIndex === 5 ? 30 : 0;
+
+  return (
+    centreX >= targetBox.left - margin &&
+    centreX <= targetBox.right + margin &&
+    centreY >= targetBox.top - margin &&
+  centreY <= targetBox.bottom + margin
+   );
     });
 
     dragging = false;
