@@ -189,7 +189,7 @@ h1 {
 /* Match the introduction panel to the tea scene. */
 #info-dialog {
   position: relative;
-  width: 420px;
+  width: 600px;
   max-width: 90%;
   max-height: 85vh;
   overflow-y: auto;
