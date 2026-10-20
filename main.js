@@ -701,7 +701,7 @@ const musicDialog = document.querySelector(".music-dialog");
 const enterMusic = document.querySelector("#enter-music");
 const enterQuiet = document.querySelector("#enter-quiet");
 
-backgroundMusic.volume = 0.1;
+backgroundMusic.volume = 0.03;
 
 /* Match the icon and accessible label to the playback state. */
 function updateMusicControl() {
